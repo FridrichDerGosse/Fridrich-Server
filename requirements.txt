@@ -1,0 +1,5 @@
+pip
+setuptools
+wheel
+mysql
+mysql-connector-python

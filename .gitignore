@@ -161,3 +161,4 @@ cython_debug/
 
 # JetBrains IDE
 /.idea
+database/_secrets.py
