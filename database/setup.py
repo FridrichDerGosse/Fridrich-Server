@@ -50,6 +50,8 @@ class DataBaseSetup:
         :param user: user for db login
         :param password: pw for db login
         """
+        print("Connecting to MySQL Server...")
+
         self.conn = mysql.connector.connect(host=host,
                                             user=user,
                                             password=password if password else DB_PASSWORD)
@@ -63,12 +65,25 @@ class DataBaseSetup:
         Create database and tables
         :param db_name: Name of the database
         """
-        self.cursor.execute(f"DROP DATABASE IF EXISTS {db_name}")
+        self.cursor.execute(f"SHOW DATABASES LIKE '{db_name}'")
+        if db_name in self.cursor.fetchone():
+            confirm = input("\n!!! - WARNING - !!!\n\n"
+                            "Database already exists!\n"
+                            "Type CONFIRM if you want to delete it to create a new one!\n"
+                            "ATTENTION: All data will be LOST\n\n"
+                            "-> ")
+            if confirm != "CONFIRM":
+                return
 
+            print("Deleting old database...")
+
+            self.cursor.execute(f"DROP DATABASE IF EXISTS {db_name}")
+
+        print("Creating new database...")
         self.cursor.execute(f"CREATE DATABASE {db_name}")
         self.cursor.execute(f"USE {db_name}")
 
-        # Varchar Sizes: 64, 256, 1024
+        print("")
 
         # Create independent tables
         self.__create_user()
@@ -86,6 +101,8 @@ class DataBaseSetup:
         """
         Create user and options table
         """
+        print("Creating user tables...")
+
         self.cursor.execute("""
         CREATE TABLE users (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -134,6 +151,8 @@ class DataBaseSetup:
         """
         Create pattern table
         """
+        print("Creating pattern table...")
+
         self.cursor.execute("""
         CREATE TABLE pattern (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -147,6 +166,8 @@ class DataBaseSetup:
         """
         Create permission tables with references
         """
+        print("Creating permission tables...")
+
         self.cursor.execute("""
         CREATE TABLE permission (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -193,6 +214,8 @@ class DataBaseSetup:
         """
         Create voting tables
         """
+        print("Creating voting tables...")
+
         self.cursor.execute("""
         CREATE TABLE voting (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -275,6 +298,11 @@ class DataBaseSetup:
         """)
 
     def __create_voting_codex(self) -> None:
+        """
+        Create codex tables (Voting tables must already exist)
+        """
+        print("Creating codex tables...")
+
         self.cursor.execute("""
         CREATE TABLE codex (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -313,6 +341,8 @@ class DataBaseSetup:
         """
         Create chat and message table
         """
+        print("Creating chat tables...")
+
         self.cursor.execute("""
         CREATE TABLE chat (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -353,9 +383,15 @@ class DataBaseSetup:
         """
         Create calender tables
         """
+        print("Creating calender tables...")
         # Work for later
 
     def __create_connection(self) -> None:
+        """
+        Create connection tables
+        """
+        print("Creating connection tables...")
+
         self.cursor.execute("""
         CREATE TABLE encryption (
             id INT UNSIGNED NOT NULL,
